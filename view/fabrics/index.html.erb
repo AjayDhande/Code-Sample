@@ -1,0 +1,20 @@
+<div class="dash-container">
+  <div class="col-lg-1">&nbsp;</div>
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="<%= 'active' if approve_febric%>">
+      <%= link_to nav_fabric, fabrics_path(tailor: params[:tailor], fabric: "approve") %>
+    </li>
+    <li class="<%= 'active' if tailor_febric%>">
+      <%= link_to febric_nav_tailor , fabrics_path(tailor: params[:tailor], fabric: "tailor") %>
+    </li>
+    <li class="<%= 'active' if febrics_as_draft%>">
+      <%= link_to t("drafts") , drafts_fabrics_path(tailor: params[:tailor], fabric: "draft") %>
+    </li>
+    <% unless params[:tailor].present? %>
+      <li class="<%= 'active' if pending_febric%>">
+        <%= link_to t("pending"), fabrics_path(tailor: params[:tailor], fabric: "pending") %>
+      </li>
+    <% end %>
+  </ul>
+  <%= render partial: "fabrics/index", locals: { fabrics: @fabrics }%>
+</div>
