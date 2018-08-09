@@ -1,0 +1,99 @@
+<% content_for :datatables do %>
+  <%= javascript_include_tag "datatables" %>
+<% end %>
+
+<div id="jobs_index" class="col-lg-12 datatables_container hidden">
+  <%= render "common/stages_buttons",
+      stages: [['start', 'preflight', 'quotation'], ['design', 'artwork', 'prepress'], ['plates'], ['delivery'], ['archive']],
+      icons: ['planting_icon.png', 'mac_icon.png', 'factory_icon.png', 'truck_icon.png', 'database_icon.png'],
+      hints: ['Startup', 'Repro', 'Production', 'Delivery', 'Archive'] %>
+
+  <% if current_user.repro? or current_user.production? %>
+    <span id="job_visibility" class="btn-group filter-control filter-align-glyphy">
+      <span class="btn btn-default stage_button active">
+        <i class="glyphicon glyphicon-eye-close"></i>
+        <%= check_box_tag :hidden_selected, "Hidden", true, class: "hidden" %>
+      </span>
+    </span>
+  <% end %>
+
+  <table class="table table-bordered table-condensed" data-api-url='/api/jobs' data-main-filter='stages' style='width: 100%'>
+    <thead>
+      <% if current_user.production? or current_user.repro? %>
+        <td data-key="edit_multiple"><span class="glyphicon glyphicon-share-alt clickable" id="edit_multiple"></span></td>
+      <% end %>
+      <td class="id" data-key="system_id">1FX JobNr.</td>
+      <td data-key="stage">Stage</td>
+      <td class="job_label" data-key="label">Label</td>
+      <td data-key="description">Description</td>
+      <% if current_user.production? or current_user.repro? %>
+        <td class="column_filterable" data-key="client_short_name">Customer</td>
+      <% end %>
+      <% if current_user.production? %>
+        <td class="column_filterable" data-key="print_supplier_short_name">Printer</td>
+      <% end %>
+      <td data-key="owner_id">Owner</td>
+      <td data-key="team_id">Team</td>
+      <td class="end_customer %>" data-key="end_customer_name">End Customer</td>
+      <td data-key="first_reference">Cust. RefNr.</td>
+      <% if current_user.production? %>
+        <td data-key="cached_plate_names">Plates</td>
+      <% end %>
+      <td data-key="priority">Priority</td>
+      <td class="last_update" data-key="updated_at">Last update</td>
+    </thead>
+    <tfoot>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <% if current_user.production? or current_user.repro? %>
+        <td></td>
+        <td>
+          <select id='customer_filter'>
+            <option></option>
+            <% @customer_names.each do |arr| %>
+              <option value='<%= arr[0] %>'><%= arr[1] %></option>
+            <% end %>
+          </select>
+        </td>
+      <% end %>
+      <% if current_user.production? %>
+        <td>
+          <select id='printer_filter'>
+            <option></option>
+            <% @printer_names.each do |arr| %>
+              <option value='<%= arr[0] %>'><%= arr[1] %></option>
+            <% end %>
+          </select>
+        </td>
+      <% end %>
+      <% if (current_user.client? || current_user.client_manager?) %>
+        <td></td>
+        <td></td>
+        <td>
+          <select id='end_customer_filter'>
+            <option></option>
+            <% @end_customer_names.each do |arr| %>
+              <option value='<%= arr[0] %>'><%= arr[1] %></option>
+            <% end %>
+          </select>
+        </td>
+      <% else %>
+        <td></td>
+      <% end %>
+      <td></td>
+      <% if current_user.production? %>
+        <td></td>
+      <% end %>
+      <td></td>
+      <td></td>
+    </tfoot>
+  </table>
+  <% unless (current_user.client? || current_user.client_manager?) %>
+    <%= link_to 'Select all', 'javascript:false', id: 'select_all', class: 'btn btn-xs btn-default' %>
+  <% end %>
+  <% if current_user.production? or current_user.repro? %>
+    <%= render "jobs/edit_multiple_modal" %>
+  <% end %>
+</div>
