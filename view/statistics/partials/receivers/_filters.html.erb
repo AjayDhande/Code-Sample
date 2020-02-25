@@ -1,0 +1,193 @@
+<div class="filters">
+  <div class="filters__title">
+    <%= t('filter') %>&nbsp;
+    <a data-ng-click="receiversCtrl.resetViewers()" uib-tooltip="Reset Unique Viewers" class="cursor-pointer">
+      <i class="icon icon-reset"></i>
+    </a>
+  </div>
+  <div class="filters__cols">
+    <div class="filters__col">
+      <input
+        type="text"
+        data-ng-model="receiversCtrl.search.email"
+        data-ng-change="receiversCtrl.changePage(true)"
+        class="form-control margin-bottom-10"
+        placeholder="<%= t('stats.viewer_email') %>">
+      <input
+        type="text"
+        data-ng-model="receiversCtrl.filter.location"
+        data-ng-change="receiversCtrl.changePage(true)"
+        class="form-control margin-bottom-10"
+        placeholder="<%= t('stats.location_placeholder') %>">
+    </div>
+    <div class="filters__col">
+      <div class="margin-bottom-10">
+        <span class="toolbar-label"><%= t('stats.seen_page.at_least') %> </span>
+        <input
+          type="number"
+          select-on-click
+          data-ng-model="receiversCtrl.filter.seen_pages"
+          data-ng-change="receiversCtrl.checkValidPage(statsCtrl.objFileInfo.pdfFile.num_pages,'seen_pages')"
+          class="form-control"
+          value="1" size="4" min="1" max="{{::statsCtrl.objFileInfo.pdfFile.num_pages}}"
+          uib-popover="<%= t('stats.valid_page_num', :page_num => '{{::statsCtrl.objFileInfo.pdfFile.num_pages}}') %>"
+          popover-is-open="receiversCtrl.invalidPage && receiversCtrl.filter.seen_pages !== null"
+          popover-trigger="'none'">
+        <span class="toolbar-label"><%= t('stats.seen_page.seen') %></span>
+      </div>
+      <div style="margin-top: 15px;">
+        <span class="toolbar-label"><%= t('stats.seen_page.at_least') %> </span>
+        <input
+          type="number"
+          select-on-click
+          data-ng-model="receiversCtrl.filter.seen_mins"
+          data-ng-change="receiversCtrl.changePage(true)"
+          class="form-control"
+          value="1" size="4" min="1">
+        <span class="toolbar-label"><%= t('stats.seen_page.mins') %></span>
+        <input
+          type="number"
+          select-on-click
+          data-ng-model="receiversCtrl.filter.on_page"
+          data-ng-change="receiversCtrl.checkValidPage(statsCtrl.objFileInfo.pdfFile.num_pages,'on_page')"
+          data-ng-disabled="receiversCtrl.filter.seen_mins === null"
+          class="form-control"
+          value="1" size="4" min="1" max="{{::statsCtrl.objFileInfo.pdfFile.num_pages}}"
+          uib-popover="<%= t('stats.valid_page_num', :page_num => '{{::statsCtrl.objFileInfo.pdfFile.num_pages}}') %>"
+          popover-is-open="receiversCtrl.invalidPage && receiversCtrl.filter.on_page !== null"
+          popover-trigger="'none'">
+      </div>
+    </div>
+    <div class="filters__col filters__col--dates">
+      <div class="input-group">
+        <input type="text" class="form-control"
+               uib-popover="<%= t('filters.from_date') %>"
+               popover-trigger="'mouseenter'"
+               readonly="readonly"
+               placeholder="<%= t('filters.from_date') %>"
+               data-ng-model="receiversCtrl.filter.fromDate"
+               alt-input-formats="yyyy-MM-dd"
+               uib-datepicker-popup="yyyy-MM-dd"
+               data-ng-click="receiversCtrl.openCalendar($event,'from_calendar')"
+               data-ng-change="receiversCtrl.checkValidDates()"
+               is-open="receiversCtrl.from_calendar.opened"
+               on-open-focus="false"
+               datepicker-options="receiversCtrl.fromDateOptions"
+               close-text="<%= t('close') %>"/>
+        <span class="input-group-btn">
+          <button type="button" class="btn btn-default" data-ng-click="receiversCtrl.openCalendar($event,'from_calendar')"><i class="icon icon-calendar2"></i></button>
+        </span>
+      </div>
+      <div class="input-group">
+        <input type="text" class="form-control"
+               uib-popover="<%= t('filters.to_date') %>"
+               popover-trigger="'mouseenter'"
+               readonly="readonly"
+               placeholder="<%= t('filters.to_date') %>"
+               data-ng-model="receiversCtrl.filter.toDate"
+               alt-input-formats="yyyy-MM-dd"
+               uib-datepicker-popup="yyyy-MM-dd"
+               data-ng-click="receiversCtrl.openCalendar($event,'to_calendar')"
+               data-ng-change="receiversCtrl.checkValidDates()"
+               is-open="receiversCtrl.to_calendar.opened"
+               on-open-focus="false"
+               datepicker-options="receiversCtrl.toDateOptions"
+               close-text="<%= t('close') %>"/>
+        <span class="input-group-btn">
+          <button type="button" class="btn btn-default" data-ng-click="receiversCtrl.openCalendar($event,'to_calendar')"><i class="icon icon-calendar2"></i></button>
+        </span>
+      </div>
+    </div>
+    <div class="filters__col">
+      <!-- <span class="toolbar-label"><%#= t('stats.sort_by') %>: </span> -->
+      <div class="btn-group sort">
+        <button type="button" class="btn btn-default dropdown-toggle margin-bottom-10" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span data-ng-bind-html="receiversCtrl.currentSort"></span>
+        </button>
+        <ul class="dropdown-menu" style="margin-top: -44px;">
+          <li>
+            <a href="" data-ng-click="receiversCtrl.sort('first_last_desc');" data-sort="first_last_desc">
+              <span class="icon icon-arrow-down7"></span>&nbsp;<%= t('stats.viewers_page.first_last') %>
+            </a>
+          </li>
+          <li>
+            <a href="" data-ng-click="receiversCtrl.sort('first_last_asc');" data-sort="first_last_asc">
+              <span class="icon icon-arrow-up7"></span>&nbsp;<%= t('stats.viewers_page.first_last') %>
+            </a>
+          </li>
+          <li role="separator" class="divider"></li>
+          <li>
+            <a href="" data-ng-click="receiversCtrl.sort('last_first_desc');" data-sort="last_first_desc">
+              <span class="icon icon-arrow-down7"></span>&nbsp;<%= t('stats.viewers_page.last_first') %>
+            </a>
+          </li>
+          <li>
+            <a href="" data-ng-click="receiversCtrl.sort('last_first_asc');" data-sort="last_first_asc">
+              <span class="icon icon-arrow-up7"></span>&nbsp;<%= t('stats.viewers_page.last_first') %>
+            </a>
+          </li>
+          <li role="separator" class="divider"></li>
+          <li>
+            <a href="" data-ng-click="receiversCtrl.sort('email_asc');" data-sort="email_asc">
+              <span class="icon icon-arrow-up7"></span>&nbsp;<%= t('stats.viewers_page.email') %>
+            </a>
+          </li>
+          <li>
+            <a href="" data-ng-click="receiversCtrl.sort('email_desc');" data-sort="email_desc">
+              <span class="icon icon-arrow-down7"></span>&nbsp;<%= t('stats.viewers_page.email') %>
+            </a>
+          </li>
+          <li role="separator" class="divider"></li>
+          <li>
+            <a href="" data-ng-click="receiversCtrl.sort('percent_desc');" data-sort="percent_desc">
+              <span class="icon icon-arrow-down7"></span>&nbsp;
+              <%= t('stats.views_page.percent_viewed') %>
+            </a>
+          </li>
+          <li>
+            <a href="" data-ng-click="receiversCtrl.sort('percent_asc');" data-sort="percent_asc">
+              <span class="icon icon-arrow-up7"></span>&nbsp;
+              <%= t('stats.views_page.percent_viewed') %>
+            </a>
+          </li>
+          <li role="separator" class="divider"></li>
+          <li>
+            <a href="" data-ng-click="receiversCtrl.sort('viewed_time_desc');" data-sort="viewed_time_desc">
+              <span class="icon icon-arrow-down7"></span>&nbsp;
+              <%= t('stats.views_page.time_viewed') %>
+            </a>
+          <li>
+            <a href="" data-ng-click="receiversCtrl.sort('viewed_time_asc');" data-sort="viewed_time_asc">
+              <span class="icon icon-arrow-up7"></span>&nbsp;
+              <%= t('stats.views_page.time_viewed') %>
+            </a>
+          </li>
+        </ul>
+        <div class="filters__col d-flex" style="min-width: 285px;">
+          <span class="title">
+            <span uib-tooltip="<%= t('doc.et_filter') %>"><%= t('doc.page_viewed_sec') %></span> :&nbsp;
+            <span data-ng-hide="receiversCtrl.checkEdit">
+              <input type="number"
+                data-ng-model="receiversCtrl.filter.threshold"
+                data-ng-change="receiversCtrl.changeListStats(true)"
+                data-ng-click="receiversCtrl.switchEdit()"
+                class="form-control threshold-number"
+                uib-tooltip="<%= t('doc.et_filter') %>"
+                style="width: 45px !important;">
+            </span>
+            <span uib-tooltip="<%= t('doc.et_filter') %>" data-ng-hide="!receiversCtrl.checkEdit"
+              data-ng-click="receiversCtrl.switchEdit()">
+              {{ receiversCtrl.filter.threshold }}
+            </span>
+            <span uib-tooltip="<%= t('doc.et_filter') %>" data-ng-if="receiversCtrl.filter.threshold === 1">
+              <%= t('number.human.time_units.nsecond') %>
+            </span>
+            <span uib-tooltip="<%= t('doc.et_filter') %>" data-ng-if="receiversCtrl.filter.threshold > 1">
+              <%= t('number.human.time_units.seconds') %>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

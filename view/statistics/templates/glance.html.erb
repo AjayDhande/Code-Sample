@@ -1,0 +1,119 @@
+<section class="stat-header">
+  <span class="title">
+    <span uib-tooltip="<%= t('doc.et_filter') %>" ><%= t('doc.page_viewed_sec') %></span> :&nbsp;
+    <span data-ng-hide="statsCtrl.checkGlanceEdit">
+      <input
+        type="number"
+        data-ng-model="statsCtrl.glance_threshold"
+        data-ng-change="statsCtrl.changeGlanceStats()"
+        data-ng-click="statsCtrl.switchGlanceEdit()"
+        class="form-control threshold-number"
+        uib-tooltip="<%= t('doc.et_filter') %>"
+        style="width: 45px !important;">
+    </span>
+    <span uib-tooltip="<%= t('doc.et_filter') %>" data-ng-hide="!statsCtrl.checkGlanceEdit"
+      data-ng-click="statsCtrl.switchGlanceEdit()">
+      {{ statsCtrl.glance_threshold }}
+    </span>
+    <span uib-tooltip="<%= t('doc.et_filter') %>" data-ng-if="statsCtrl.glance_threshold === 1">
+      <%= t('number.human.time_units.nsecond') %>
+    </span>
+    <span uib-tooltip="<%= t('doc.et_filter') %>" data-ng-if="statsCtrl.glance_threshold > 1">
+      <%= t('number.human.time_units.seconds') %>
+    </span>
+  </span>
+</section>
+<br>
+<section class="at__a__glance">
+    <uib-tabset class="tabs">
+      <uib-tab heading="<%= t('stats.overview.title') %>">     
+        <div class="glance__numbers">
+          <div class="glance__numbers__col">
+            <div class="glance__numbers__col__title">
+              <%= t('stats.overview.performance')%>
+            </div>
+            <div class="glance__numbers__col__item">
+              <a href="" ui-sref="stats-views">
+                <div class="glance__numbers__col__item__text">
+                  <div class="text--big" data-ng-bind="statsCtrl.stats.viewers">{{::statsCtrl.stats.viewers}}</div>
+                  <%= t('stats.views') %>
+                </div>
+              </a>
+            </div>
+            <div class="glance__numbers__col__item">
+              <div class="glance__numbers__col__item__text">
+                <div class="text--big" data-ng-bind="statsCtrl.stats.total_min_viewed">{{::statsCtrl.stats.total_min_viewed}}</div>
+                <%= t('stats.total_time') %>
+              </div>
+            </div>
+            <div class="glance__numbers__col__item">
+              <div class="glance__numbers__col__item__text">
+                <div class="text--big" data-ng-bind="statsCtrl.stats.percent_viewed">{{::statsCtrl.stats.percent_viewed}}</div>
+                <%= t("stats.percent_viewed") %>
+              </div>
+            </div>
+            <div class="glance__numbers__col__item">
+              <div class="glance__numbers__col__item__text">
+                <div class="text--big" data-ng-bind="statsCtrl.getMostViewedPages()">{{::statsCtrl.getMostViewedPages()}}</div>
+                <div>
+                  <span data-ng-if="::statsCtrl.stats.most_viewed_pages.pages.length<=1"><%= t('stats.popular_page') %></span>
+                  <span data-ng-if="::statsCtrl.stats.most_viewed_pages.pages.length>1"><%= t('stats.popular_pages') %></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="glance__numbers__col">
+            <div class="glance__numbers__col__title">
+              <%= t('stats.overview.behaviour') %>
+            </div>
+            <div class="glance__numbers__col__item">
+              <a href="" ui-sref="stats-views">
+                <div class="glance__numbers__col__item__text">
+                  <div class="text--big" data-ng-bind="statsCtrl.stats.returning_viewers">{{::statsCtrl.stats.returning_viewers}}</div>
+                  <%= t('stats.returning') %>
+                </div>
+              </a>
+            </div>
+            <div class="glance__numbers__col__item">
+              <div class="glance__numbers__col__item__text">
+                <div class="text--big">{{::statsCtrl.stats.optins_num}}</div><%= t('stats.optins')%>
+              </div>
+            </div>
+            <div class="glance__numbers__col__item">
+              <a href="" ui-sref="stats-viewers">
+                <div class="glance__numbers__col__item__text">
+                  <div class="text--big">{{::statsCtrl.stats.unique_viewers}}</div>
+                  <%= t('stats.tabs.viewers') %>
+                </div>
+              </a>
+            </div>
+            <div class="glance__numbers__col__item">
+              <div class="glance__numbers__col__item__text">
+                <div class="text--big" data-ng-bind="statsCtrl.stats.engagement">{{::statsCtrl.stats.engagement}}</div>
+                <%= t('stats.engagement') %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </uib-tab>
+    </uib-tabset>
+
+    <uib-tabset class="tabs">
+      <uib-tab  data-ng-repeat="chart in statsCtrl.charts" data-ng-if="-1 !== ['page'].indexOf(chart.label)" id="{{chart.label}}" heading="{{chart.title}}">
+        <highchart class="chart" settings="chart" back-btn-text="'<%= t('back') %>'"></highchart>
+      </uib-tab>
+    </uib-tabset>
+
+    <uib-tabset class="tabs">
+      <uib-tab data-ng-repeat="chart in statsCtrl.charts" data-ng-if="-1 !== ['browser','os_family','device'].indexOf(chart.label)" id="{{chart.label}}" heading="{{chart.title}}">
+        <highchart class="chart" settings="chart" back-btn-text="'<%= t('back') %>'"></highchart>
+      </uib-tab>
+    </uib-tabset>
+
+    <uib-tabset class="tabs">
+      <uib-tab data-ng-repeat="chart in statsCtrl.charts" data-ng-if="-1 !== ['country','subdivision','city'].indexOf(chart.label)" heading="{{chart.title}}">
+        <highchart class="chart" settings="chart" back-btn-text="'<%= t('back') %>'"></highchart>
+      </uib-tab>
+    </uib-tabset>
+
+</section>

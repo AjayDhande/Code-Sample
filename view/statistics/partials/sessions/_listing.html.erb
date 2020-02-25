@@ -1,0 +1,93 @@
+<div  data-ng-if="::sessCtrl.filteredSessions.length == 0"><%= t('stats.no_results') %></div>
+<div class="table-responsive" data-ng-if="(sessCtrl.filteredSessions.length > 0)" data-ng-cloak>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th class="session"><%= t('stats.visits')%></th>
+        <th ng-if="sessCtrl.parentType === 'doc'" class="link"><%= t('stats.viewer_link')%></th>
+        <th class="name"><%= t('stats.recipient')%></th>
+        <th class="location"><%= t('stats.location')%></th>
+        <th><%= t('stats.platform')%></th>
+        <th>
+          <span
+            uib-popover="<%= t('stats.tooltips.engagement').html_safe %>"
+            popover-trigger="'mouseenter'" popover-class="black" class="cursor-help">
+            <%= t('stats.engagement')%>
+          </span>
+        </th>
+        <th>
+          <span
+            uib-popover="<%= t('stats.tooltips.get_pages_viewed_percent').html_safe %>"
+            popover-trigger="'mouseenter'" popover-class="black" class="cursor-help">
+            <%= t('stats.percent_viewed')%>
+          </span>
+        </th>
+        <th><%= t('stats.tbl_time_spent')%></th>
+        <th><%= t('stats.top_page')%></th>
+        <th><%= t('stats.exit_page')%></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-ng-repeat="session in sessCtrl.filteredSessions">
+        <td class="session">
+          <a ui-sref="stats-viewer({receiverId: session.receiver.id})" data-ng-if="session.receiver.id">
+            {{ ::session.date }}
+          </a>
+          <a ui-sref="unknown-stats-viewer({receiverId: [session.id, 'session']})" data-ng-if="!session.receiver.id">
+            {{ ::session.date }}
+          </a>
+        </td>
+        <td ng-if="sessCtrl.parentType === 'doc'">
+          <a href="{{ ::session.tracking_stats_link }}" uib-tooltip="{{ ::session.tracking_link_tooltip }}" target="_blank" class="link-icons"><span class="icon icon-link5"></span></a>
+        </td>
+        <td class="name">
+          <span data-ng-bind="::session.receiver.name" uib-tooltip="{{ ::session.receiver.email }}" data-ng-if="session.receiver.name !== session.receiver.email"></span>
+          <span data-ng-bind="::session.receiver.email" uib-tooltip="Name not known" data-ng-if="session.receiver.name === session.receiver.email"></span>
+          <span data-ng-if="::!session.receiver.name"><%= t('stats.unknown') %></span>
+        </td>
+        <td class="location">
+          <location city="::session.city"
+                    ip-details="::session.ip_details"
+                    subdivision="::session.subdivision"
+                    country="::session.country"
+                    show-icon="false"
+                    show-country="false"
+                    location-text="'<%= t('stats.location') %>'"
+                    unknown="'<%= t('stats.recipient_unknown') %>'"></location>
+        </td>
+        <td>
+          <img data-ng-if="::session.browser_info.browser_icon" alt=""
+               data-ng-src="/images/browser/{{::session.browser_info.browser_icon}}"
+               uib-tooltip="{{::(session.browser + ' ' + (session.browser_info.browser_version == null ? '' : session.browser_info.browser_version)) }}"
+               tooltip-append-to-body="true">
+          <img data-ng-if="::session.browser_info.os_icon" alt=""
+               data-ng-src="/images/os/{{::session.browser_info.os_icon}}"
+               uib-tooltip="{{::session.os }}"
+               tooltip-append-to-body="true">
+          <img data-ng-if="::session.browser_info.device_icon" alt=""
+               data-ng-src="/images/device/{{::session.browser_info.device_icon}}"
+               uib-tooltip="{{::session.device }}"
+               tooltip-append-to-body="true">
+          <span data-ng-if="::($ctrl.session.browser=='' && $ctrl.session.os == '' && $ctrl.session.device == '')">
+            <%= t('stats.unknown_browser') %>
+          </span>
+        </td>
+        <td data-ng-bind="::session.engagement"></td>
+        <td data-ng-bind="::session.percent_viewed"></td>
+        <td><span uib-tooltip="HH:MM:SS">{{ session.min_viewed }}</span></td>
+        <td>
+          <%= pages_by_time_spent('sessCtrl','session') %>
+          <%= pages_by_time_spent_popover('session') %>
+        </td>
+        <td>
+          <%= exit_pages('sessCtrl','session') %>
+          <%= exit_page_popover_old('session') %>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div data-ng-if="sessCtrl.no_recipients_found" class="col-md-10 d-flex alert alert-warning">
+  <p><i class="icon icon-user-cancel"></i> {{ sessCtrl.no_recipients_found }}</p>
+</div>

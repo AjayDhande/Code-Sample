@@ -1,0 +1,125 @@
+<div class="page">
+  <span class="toolbar-label"><%= t('stats.page', :page_num => '') %>: </span>
+  <input type="number" data-ng-model="statsCtrl.page" select-on-click id="pageNumber"
+         class="form-control" value="1" size="4" min="1" data-ng-max="::statsCtrl.objFileInfo.pdfFile.num_pages">
+  <span id="numPages"> / {{::statsCtrl.objFileInfo.pdfFile.num_pages}}</span>
+
+  <span class="toolbar-label"><%= t('stats.sort_by') %>: </span>
+  <div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span data-ng-bind-html="statsCtrl.currentSort"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <li>
+        <a href="" data-ng-click="statsCtrl.sort('time_desc');" data-sort="time_desc">
+          <%= t('stats.time_on_page') %>&nbsp;<span class="icon icon-arrow-down7"></span>
+        </a>
+      </li>
+      <li>
+        <a href="" data-ng-click="statsCtrl.sort('time_asc');" data-sort="time_asc">
+          <%= t('stats.time_on_page') %>&nbsp;<span class="icon icon-arrow-up7"></span>
+        </a>
+      </li>
+      <li role="separator" class="divider"></li>
+      <li>
+        <a href="" data-ng-click="statsCtrl.sort('page_asc');" data-sort="page_asc">
+          <%= t('stats.page_asc', :page_num => '{{::statsCtrl.objFileInfo.pdfFile.num_pages}}') %>&nbsp;<span class="icon icon-arrow-down7"></span>
+        </a>
+      </li>
+      <li>
+        <a href="" data-ng-click="statsCtrl.sort('page_desc');" data-sort="page_desc">
+          <%= t('stats.page_desc', :page_num => '{{::statsCtrl.objFileInfo.pdfFile.num_pages}}') %>&nbsp;<span class="icon icon-arrow-up7"></span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="carousel-container page-carousel-container">
+  <ul
+  rn-carousel
+  rn-carousel-controls="true"
+  rn-carousel-index="statsCtrl.pageIndex"
+  rn-carousel-transition="fadeAndSlide"
+  rn-carousel-controls-allow-loop="true">
+    <li class="carousel page" data-ng-repeat="pageObj in statsCtrl.pageByPage track by $index" data-ng-class="{'not-view-page': (!pageObj.elements.length && !pageObj.total_time_in_sec 
+      && !pageObj.page_exists && !pageObj.views)}">
+      <div class="medal" uib-popover="<%= t('stats.popular_page') %>"
+           popover-trigger="'mouseenter'"
+           popover-append-to-body="true"
+           data-ng-if="pageObj.popular_page">
+        <%= image_tag 'icons/medal.svg'%>
+      </div>
+      <div class="page__row" data-ng-if="pageObj.views">
+        <div class="page__row__item">
+          <div class="page__row__item__details">
+            <span class="page__row__item__details__title">
+              <%= t('stats.page_views') %>
+            </span>
+            <uib-progress max="::statsCtrl.stats.viewers">
+              <uib-bar value="pageObj.views">
+              </uib-bar>
+            </uib-progress>
+            <span class="page__row__item__details__info">
+              <%= t('stats.num_views', :page_viewers => '{{pageObj.views}}', :viewers => '{{::statsCtrl.stats.viewers}}') %>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="page__row" data-ng-if="pageObj.page_exists">
+        <div class="page__row__item">
+          <div class="page__row__item__details">
+            <span class="page__row__item__details__title">
+              <%= t('stats.page_exits') %>
+            </span>
+            <uib-progress max="::statsCtrl.stats.viewers">
+              <uib-bar value="pageObj.page_exists">
+              </uib-bar>
+            </uib-progress>
+            <span class="page__row__item__details__info">
+              <%= t('stats.exited_on_page', :page_viewers => '{{pageObj.page_exists}}', :viewers => '{{::statsCtrl.stats.viewers}}') %>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="page__row" data-ng-if="pageObj.total_time_in_sec">
+        <div class="page__row__item">
+          <div class="page__row__item__details">
+            <span class="page__row__item__details__title">
+              <%= t('stats.time_on_page') %>
+            </span>
+            <uib-progress max="statsCtrl.stats.total_secs_viewed">
+              <uib-bar value="pageObj.total_time_in_sec">
+              </uib-bar>
+            </uib-progress>
+            <span class="page__row__item__details__info">
+              {{pageObj.total_time_in_min}} / {{::statsCtrl.stats.total_min_viewed}}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="page__row" data-ng-if="pageObj.elements.length">
+        <div class="page__row__item">
+          <div class="page__row__item__details">
+            <span class="page__row__item__details__title">
+              <%= t('stats.element_clicks') %>
+            </span>
+
+            <stats-elements-list items="pageObj.elements"></stats-elements-list>
+          </div>
+        </div>
+      </div>
+
+      <div class="page__row align-items-center" data-ng-if="!pageObj.elements.length && !pageObj.total_time_in_sec 
+      && !pageObj.page_exists && !pageObj.views">
+        <div class="page__row__item">
+          <div class="page__row__item__details text-center">
+            <span>
+              <%= t('stats.viewers_page.unseen_page')%>
+            </span>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

@@ -1,0 +1,39 @@
+<span data-ng-bind="::$ctrl.session.date" class="pull-left margin-top-10"></span>
+<div class="pull-right margin-top-10 margin-left-5">
+  <img
+  data-ng-if="::$ctrl.session.browser_info.browser_icon"
+  data-ng-src="/images/browser/{{::$ctrl.session.browser_info.browser_icon}}"
+  uib-tooltip="{{::($ctrl.session.browser + ' ' + ($ctrl.session.browser_info.browser_version == null ? '' : $ctrl.session.browser_info.browser_version)) }}"
+  tooltip-append-to-body="true"
+  class="viewer-icon"
+  >
+  <img
+  data-ng-if="::$ctrl.session.browser_info.os_icon"
+  data-ng-src="/images/os/{{::$ctrl.session.browser_info.os_icon}}"
+  uib-tooltip="{{::$ctrl.session.os }}"
+  tooltip-append-to-body="true"
+  class="viewer-icon"
+  >
+  <img
+  data-ng-if="::$ctrl.session.browser_info.device_icon"
+  data-ng-src="/images/device/{{::$ctrl.session.browser_info.device_icon}}"
+  uib-tooltip="{{::$ctrl.session.device }}"
+  tooltip-append-to-body="true"
+  class="viewer-icon"
+  >
+  <span data-ng-if="::($ctrl.session.browser=='' && $ctrl.session.os == '' && $ctrl.session.device == '')">
+    <%= t('stats.unknown_browser') %>
+  </span>
+</div>
+
+<div class="clearfix"></div>
+<div class="margin-bottom-10 cursor-pointer" data-ng-click="$ctrl.openLocation()">
+
+  <location city="::$ctrl.session.city"
+            ip-details="::$ctrl.session.ip_details"
+            country="::$ctrl.session.country"
+            show-icon="false"
+            location-text="'<%= t('stats.location') %>'"
+            unknown="'<%= t('stats.unknown') %>'"></location>
+</div>
+<div data-ng-if="::$ctrl.displayDelimiter" class="session-delimiter"></div>

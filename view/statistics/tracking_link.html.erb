@@ -1,0 +1,81 @@
+<%= javascript_tag do %>
+  var objInit = {
+  "pdfFile": <%= @pdf_file.to_json(except: %i[user_id modifier_id created_at updated_at], methods: %i[page_tags thumbs_details]).html_safe%>,
+  "pdfSize": '<%= File.size(@pdf_file.file.file.file) %>',
+  pdfStamp: '<%= File.new(@pdf_file.file.file.file).mtime.to_i.to_s %>',
+  "tl": <%= raw render :template => 'tracking_links/show.json', :locals => {tracking_link: @tracking_link, get_stats: @get_stats} %>,
+  "elements": <%= raw @elements_json %>,
+  "charts": [
+  {
+    "title": '<%= t('stats.charts.country') %>',
+    "key": 'by_country',
+    "type": 'pie',
+    "label": 'country',
+    "drilldown": 'subdivision',
+    "value": 'hits',
+    "unit": '<%= t('stats.views')%>',
+    "skip_if_only_one": true,
+    "options": {"showTitle": false,"hasLegend": true}
+  },
+  {
+    "title": '<%= t('stats.charts.subdivision') %>',
+    "key": 'by_subdivision',
+    "type": 'pie',
+    "label": 'subdivision',
+    "drilldown": 'city',
+    "value": 'hits',
+    "unit": '<%= t('stats.views')%>',
+    "skip_if_only_one": true,
+    "options": {"showTitle": false,"hasLegend": true}
+  },
+  {
+    "title": '<%= t('stats.charts.city') %>',
+    "key": 'by_city',
+    "type": 'pie',
+    "label": 'city',
+    "value": 'hits',
+    "unit": '<%= t('stats.views')%>',
+    "options": {"showTitle": false,"hasLegend": true}
+  },
+  {
+    "title": '<%= t('stats.charts.browser') %>',
+    "key": 'by_browser',
+    "type": 'pie',
+    "label": 'browser',
+    "value": 'hits',
+    "unit": '<%= t('stats.views')%>',
+    "options": {"showTitle": false,"hasLegend": true}
+  },
+  {
+    "title": '<%= t('stats.charts.os') %>',
+    "key": 'by_os',
+    "type": 'pie',
+    "label": 'os_family',
+    "drilldown": 'os',
+    "value": 'hits',
+    "unit": '<%= t('stats.views')%>',
+    "options": {"showTitle": false,"hasLegend": true}
+  },
+  {
+    "title": '<%= t('stats.charts.device') %>',
+    "key": 'by_device',
+    "type": 'pie',
+    "label":'device',
+    "value":'hits',
+    "unit": '<%= t('stats.views')%>',
+    "options": {"showTitle": false,"hasLegend": true}
+  },
+  {
+    "title": '<%= t('stats.charts.time_per_page') %>',
+    "key": 'time_per_page',
+    "type": 'column',
+    "label":'page',
+    "value":'total_secs_on_page',
+    "unit": '<%= t('stats.time_on_page')%>',
+    "options": {"showTitle": false,"hasLegend": false, "hideMenu": true, "height": 262, "tooltip_field":"total_min_on_page"}
+  }
+  ],
+  messages: <%= raw I18n.backend.send(:translations)[I18n.locale][:stats][:js][:messages].to_json %>
+  };
+<% end %>
+<%= render 'statistics/partials/main'%>

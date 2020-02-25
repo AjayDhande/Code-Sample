@@ -1,0 +1,63 @@
+<%= render 'statistics/partials/receiver/header' %>
+<div class="margin-top-15 d-flex stat-header">
+  <div class="receiver__tabs"
+       data-ng-init="receiverCtrl.init(statsCtrl.parentType, statsCtrl.parent, statsCtrl.objFileInfo.pdfFile);"
+       data-ng-cloak>
+    <scrollable-tabset show-tooltips="false" show-drop-down="false" api="receiverCtrl.scrlTabsApi">
+      <uib-tabset class="tabs margin-xs-bottom-25 margin-sm-bottom-0">
+        <uib-tab class="tab-selector" title="{{ receiverCtrl.receiver.sessions[0].id == sess.id ? 'Most recent visit' : '' }}" data-ng-repeat="sess in receiverCtrl.receiver.sessions"
+                 heading="{{sess.date}}"
+                 select="receiverCtrl.changeTab($index)">
+          <%= render 'statistics/partials/receiver/session_header' %>
+          <section class="padding-10 margin-top-15">
+            <article>
+          <span class="label label-info margin-right-15 cursor-pointer"
+                data-ng-click="receiverCtrl.filterTags('not_tagged')">
+            <%= t('stats.viewer.pages_with_not_tags')%>
+          </span>
+              <span class="label label-info margin-right-15 cursor-pointer"
+                    data-ng-click="receiverCtrl.filterTags('all')">
+            <%= t('stats.viewer.show_all_pages') %>
+          </span>
+            </article>
+            <article class="col-xs-12 margin-top-10" data-ng-if="receiverCtrl.filteredTags.length">
+              <%= t('stats.viewer.filtered_tags') %>
+              <span class="label label-info margin-right-15 cursor-pointer"
+                    data-ng-repeat="tag in receiverCtrl.filteredTags"
+                    data-ng-click="receiverCtrl.removeFilterTag($index)">
+          {{::tag}}
+        </span>
+            </article>
+          </section>
+          <%= render 'statistics/partials/receiver/session_pages' %>
+        </uib-tab>
+      </uib-tabset>
+    </scrollable-tabset>
+  </div>
+  <div class="hidden-xs">
+    <article class="pdf-container">
+      <pdf-viewer pdf-file="receiverCtrl.pdfFile.file.url" class="d-block"></pdf-viewer>
+    </article>
+    <div class="text-center">
+      <button style="margin-right: 3%;" data-ng-click="receiverCtrl.previewDoc(statsCtrl.objFileInfo.pdfFile.file.language)"
+              class="btn btn-default margin-top-10">
+        <%= t('preview') %>
+      </button>
+    </div>
+    <div class="d-flex width-384 margin-top-20">
+      <div class="width-100p st-left-align">
+        <span class="pull-left pdf-time-stamp">
+          {{ receiverCtrl.receiver.created_time_stamp }}
+        </span>
+        <br>
+        <span class="policy-terms-text">
+          <span uib-tooltip="{{ receiverCtrl.policy_time }}">Privacy Policy</span> & <span uib-tooltip="{{ receiverCtrl.terms_time }}">TOS Accepted</span>
+        </span>
+      </div>
+
+      <div class="pull-right st-right-align">
+        <%= image_tag 'icons/gdpr.svg'%>
+      </div>
+    </div>
+  </div>
+</div>

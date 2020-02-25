@@ -1,0 +1,36 @@
+<section class="stat-header">
+  <span class="title">
+    <span uib-tooltip="<%= t('doc.et_filter') %>"><%= t('doc.page_viewed_sec') %></span> :&nbsp;
+    <span data-ng-hide="statsCtrl.checkGlanceEdit">
+      <input
+        type="number"
+        data-ng-model="statsCtrl.pbp_threshold"
+        data-ng-change="statsCtrl.changePbpStats()"
+        data-ng-click="statsCtrl.switchGlanceEdit()"
+        class="form-control threshold-number"
+        uib-tooltip="<%= t('doc.et_filter') %>"
+        style="width: 45px !important;">
+    </span>
+    <span uib-tooltip="<%= t('doc.et_filter') %>" data-ng-hide="!statsCtrl.checkGlanceEdit"
+      data-ng-click="statsCtrl.switchGlanceEdit()">
+      {{ statsCtrl.pbp_threshold }}
+    </span>
+    <span uib-tooltip="<%= t('doc.et_filter') %>" data-ng-if="statsCtrl.pbp_threshold === 1">
+      <%= t('number.human.time_units.nsecond') %>
+    </span>
+    <span uib-tooltip="<%= t('doc.et_filter') %>" data-ng-if="statsCtrl.pbp_threshold > 1">
+      <%= t('number.human.time_units.seconds') %>
+    </span>
+  </span>
+</section>
+
+<br>
+<section class="d-flex stat-header">
+  <article class="page_by_page__stats">
+    <%= render 'statistics/partials/page_by_page' %>
+  </article>
+  <article class="pdf-container">
+    <div class="page-preview"><%= t('stats.page_preview') %></div>
+    <pdf-viewer pdf-file="statsCtrl.objFileInfo.pdfFile.file.url"></pdf-viewer>
+  </article>
+</section>

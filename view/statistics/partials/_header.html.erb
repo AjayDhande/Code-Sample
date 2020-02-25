@@ -1,0 +1,45 @@
+<% content_for :header do %>
+  <div class="my-header">
+    <%= @tracking_link.nil? ? t('kdf') : t('tl.tracking_link') %>
+    <%= t('stats.statistics') %>
+  </div>
+<% end %>
+
+<section class="stat-header">
+    <% if @tracking_link.nil? %>
+      <a class="title" uib-tooltip="<%= t('doc.all_links') %>" target="_blank" data-ng-href="<%= tl_listing_path %>/doc/{{::statsCtrl.parent.group_id}}"><%= t('kdf') %>:</a>
+      <% if current_user.user_type == User::TYPE_SALES %>
+        {{::statsCtrl.heading.title}}
+      <% else %>
+        <a uib-tooltip="<%= t('doc.settings') %>" data-ng-href="/kdfs/{{ ::statsCtrl.parent.id }}" style="padding: .2em .6em .3em;" target="_blank">{{::statsCtrl.heading.title}}</a>
+      <% end %><br>
+    <% else %>
+      <div class="d-flex">
+        <span class="title right-margin-9">
+          <%= t('tl.tracking_link') %>:
+          <% if current_user.user_type == User::TYPE_SALES %>
+            {{::statsCtrl.heading.title}}
+          <% else %>
+            <a data-ng-href="<%= tl_listing_path %>/tl/{{::statsCtrl.parent.token}}" target="_blank">{{::statsCtrl.heading.title}}</a>
+          <% end %>
+        </span>
+
+        <span class="title">
+          <a uib-tooltip="<%= t('doc.all_links') %>" data-ng-href="<%= tl_listing_path %>/doc/{{::statsCtrl.parent.group_id}}" target="_blank"><%= t('kdf') %>:</a>
+          <% if current_user.user_type == User::TYPE_SALES %>
+            <span class="{{ statsCtrl.parent.doc_file_status === 'offline' ? 'offline-flag' : '' }} <%= Language::LANGUAGES[@tracking_link.language][:class] %>"><%= @tracking_link.doc.title %></span>
+          <% else %>
+            <a uib-tooltip="<%= t('doc.settings') %>" data-ng-href="/kdfs/{{ ::statsCtrl.parent.doc.id }}" target="_blank">
+            <span class="{{ statsCtrl.parent.doc_file_status === 'offline' ? 'offline-flag' : '' }} <%= Language::LANGUAGES[@tracking_link.language][:class] %>"><%= @tracking_link.doc.title %></span>
+            </a>
+          <% end %>
+        </span>
+      </div>
+    <% end %>
+    <span class="margin-top-7" data-ng-if="::statsCtrl.parent.tags.length"><%= t('tl.tags')%>:</span>
+    <span data-ng-repeat="tag in statsCtrl.parent.tags"
+          data-ng-if="::statsCtrl.parent.tags.length"
+          data-ng-bind-html="::tag.name"
+          class="label label-primary margin-left-5 inline-block">
+    </span>
+</section>

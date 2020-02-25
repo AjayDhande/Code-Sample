@@ -1,0 +1,116 @@
+<section class="stat-header">
+  <span class="title">
+    <span uib-tooltip="<%= t('doc.et_filter') %>"><%= t('doc.page_viewed_sec') %></span> :&nbsp;
+    <span uib-tooltip="<%= t('doc.et_filter') %>" data-ng-hide="receiverCtrl.checkEdit">
+      <input type="number"
+        data-ng-model="receiverCtrl.threshold"
+        data-ng-change="receiverCtrl.changeStats()"
+        class="form-control threshold-number"
+        data-ng-click="receiverCtrl.switchEdit()"
+        style="width: 45px !important;">
+    </span>
+    <span uib-tooltip="<%= t('doc.et_filter') %>" data-ng-hide="!receiverCtrl.checkEdit"
+      data-ng-click="receiverCtrl.switchEdit()">
+      {{ receiverCtrl.threshold }}
+    </span>
+    <span uib-tooltip="<%= t('doc.et_filter') %>" data-ng-if="receiverCtrl.threshold === 1">
+      <%= t('number.human.time_units.nsecond') %>
+    </span>
+    <span uib-tooltip="<%= t('doc.et_filter') %>" data-ng-if="receiverCtrl.threshold > 1">
+      <%= t('number.human.time_units.seconds') %>
+    </span>
+  </span>
+</section><br>
+<section class="stat-header receiver__header">
+  <div class="receiver__header__box">
+    <div class="receiver__header__box__big receiver__header__box__big--name receiver__header__box__big--border_bottom">
+      <span data-ng-if="receiverCtrl.receiver.name !== ''">
+        {{::receiverCtrl.receiver.name}}
+      </span>
+      <span data-ng-if="receiverCtrl.receiver.name === ''">
+        {{::receiverCtrl.receiver.email}}
+      </span>
+      <span uib-tooltip="<%= t('stats.recipient_unknown_tooltip') %>"
+        data-ng-if="receiverCtrl.receiver.name === '' && receiverCtrl.receiver.email === ''">
+        <%= t('stats.recipient_unknown') %>
+      </span>
+    </div>
+    <div class="receiver__header__box__info receiver__header__box__info--small-text d-flex flex-wrap">
+      <span><%= t('stats.first_seen') %>:&nbsp;</span>
+      <span uib-tooltip="<%= t("stats.show_seens", recipient: "{{ (receiverCtrl.receiver.name === '' && receiverCtrl.receiver.email === '') ? 'Unknown user' : receiverCtrl.receiver.name === '' ? receiverCtrl.receiver.email : receiverCtrl.receiver.name }}", date: '{{ receiverCtrl.firstSession.date.split(' ')[0] }}', at: '{{ receiverCtrl.firstSession.date.split(' ')[1] }} {{ receiverCtrl.firstSession.date.split(' ')[2] }}', ip: '{{ receiverCtrl.firstSession.ip }}', country_name: '{{ receiverCtrl.firstSession.country }}') %>">{{ ::receiverCtrl.firstSession.date.split(' ')[0] }}</span>
+      <%= render 'statistics/partials/receiver/receiver_location', seen: 'first_seen' %>
+    </div>
+    <div class="receiver__header__box__info receiver__header__box__info--small-text d-flex flex-wrap">
+      <span><%= t('stats.last_seen') %>:&nbsp;</span>
+      <span uib-tooltip="<%= t("stats.show_seens", recipient: "{{ (receiverCtrl.receiver.name === '' && receiverCtrl.receiver.email === '') ? 'Unknown user' : receiverCtrl.receiver.name === '' ? receiverCtrl.receiver.email : receiverCtrl.receiver.name }}", date: '{{ receiverCtrl.lastSession.pages[receiverCtrl.lastSession.pages.length-1].date.split(' ')[0] }}', at: '{{ receiverCtrl.lastSession.pages[receiverCtrl.lastSession.pages.length-1].date.split(' ')[1] }} {{ receiverCtrl.lastSession.pages[receiverCtrl.lastSession.pages.length-1].date.split(' ')[2] }}', ip: '{{ receiverCtrl.lastSession.ip }}', country_name: '{{ receiverCtrl.lastSession.country }}') %>">{{ ::(receiverCtrl.lastSession.pages[receiverCtrl.lastSession.pages.length-1].date.split(' ')[0]) }}</span>
+      <%= render 'statistics/partials/receiver/receiver_location', seen: 'last_seen' %>
+    </div>
+  </div>
+  <div class="receiver__header__box receiver__header__box--right d-flex flex-wrap">
+    <div class="receiver__header__box__info">
+      <div class="receiver__header__box__big">
+        {{receiverCtrl.receiver.engagement}}
+      </div>
+      <span><%= t('stats.engagement')%></span>
+    </div>
+    <div class="receiver__header__box__info">
+      <div class="receiver__header__box__big">
+        {{receiverCtrl.receiver.percent_viewed}}
+      </div>
+      <%= t('stats.percent_viewed') %>
+    </div>
+    <div class="receiver__header__box__info">
+      <div class="receiver__header__box__big">
+        <span uib-tooltip="HH:MM:SS">{{receiverCtrl.receiver.total_min_viewed}}</span>
+      </div>
+      <%= t('stats.total_time') %>
+    </div>
+    <div class="receiver__header__box__info">
+      <div class="receiver__header__box__big">
+        {{receiverCtrl.receiver.sessions.length}}
+      </div>
+      {{receiverCtrl.receiver.sessions.length == 1 ? '<%= t('stats.view') %>' : '<%= t('stats.views') %>'}}
+    </div>
+    <div class="receiver__header__box__info">
+      <div class="receiver__header__box__big">
+        <%= pages_by_time_spent('receiverCtrl','receiverCtrl.receiver') %>
+        <%= pages_by_time_spent_popover('receiverCtrl.receiver') %>
+      </div>
+      <span data-ng-if="receiverCtrl.receiver.pages_by_time_spent.pages.length <=  1 || receiverCtrl.receiver.pages_by_time_spent.pages[0] === '-'"><%= t('stats.top_page') %></span>
+      <span data-ng-if="receiverCtrl.receiver.pages_by_time_spent.pages.length >  1"><%= t('stats.top_pages') %></span>
+    </div>
+    <div class="receiver__header__box__info">
+      <div class="receiver__header__box__big">
+
+        <span data-ng-if="!receiverCtrl.receiver.popular_exit_pages.pages.length != 0" uib-popover-html="
+          receiverCtrl.renderPage('receiver' +   
+          receiverCtrl.receiver.popular_exit_pages[0].session_id, 
+          receiverCtrl.receiver.popular_exit_pages[0].page, 'ExitPage')"
+          popover-placement="auto top"
+          popover-trigger="'mouseenter'"
+          popover-append-to-body="true"
+          class="cursor-help">
+          {{ receiverCtrl.receiver.popular_exit_pages[0].page }}
+        </span>
+
+        <div data-ng-if="!receiverCtrl.receiver.popular_exit_pages.pages.length != 0" class="popover"
+          id="receiver{{receiverCtrl.receiver.popular_exit_pages[0].session_id}}ExitPage{{receiverCtrl.receiver.popular_exit_pages[0].page}}">
+          <div class="text-center">
+            <img data-ng-src="{{statsCtrl.objFileInfo.pdfFile.thumbs_details.normal + (receiverCtrl.receiver.popular_exit_pages[0].page-1) + '.' + statsCtrl.objFileInfo.pdfFile.thumbs_details.extension}}"
+                 class="box-shadow"
+                 alt="{{::receiverCtrl.receiver.popular_exit_pages[0].page}}">
+            <div class="margin-top-10 text-left" data-ng-if="::receiverCtrl.receiver.page_tags[receiverCtrl.receiver.popular_exit_pages[0].page].length">
+               #{t('tl.tags')}:
+              <span data-ng-repeat="tag in receiverCtrl.receiver.page_tags[receiverCtrl.receiver.popular_exit_pages[0].page]"
+                    data-ng-bind-html="::tag"
+                    class="label label-primary margin-left-5 inline-block"></span></div>
+          </div>
+        </div>
+
+        <%= exit_pages2('receiverCtrl','receiverCtrl.receiver') %>
+        <%= exit_page_popover('receiverCtrl.receiver') %>
+      </div>
+      <%= t('stats.exit_page') %>
+    </div>
+  </div>
+</section>

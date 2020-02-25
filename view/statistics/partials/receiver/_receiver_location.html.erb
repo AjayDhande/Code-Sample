@@ -1,0 +1,34 @@
+<% if seen == 'first_seen' %>
+  <a class="margin-sm-left-5" href="{{'https://google.com/maps/place/'+receiverCtrl.firstSession.ip_details.location.lat+','+receiverCtrl.firstSession.ip_details.location.long}}"
+    target="viewer_location"
+    data-ng-if="::receiverCtrl.firstSession.ip_details">
+    <span data-ng-if="::(receiverCtrl.firstSession.ip_details.country_code)" 
+      tooltip-append-to-body="true"
+      uib-tooltip="<%= t("stats.show_seens", recipient: "{{ (receiverCtrl.receiver.name === '' && receiverCtrl.receiver.email === '') ? 'Unknown user' : receiverCtrl.receiver.name === '' ? receiverCtrl.receiver.email : receiverCtrl.receiver.name }}", date: '{{ receiverCtrl.firstSession.date.split(' ')[0] }}', at: '{{ receiverCtrl.firstSession.date.split(' ')[1] }} {{ receiverCtrl.firstSession.date.split(' ')[2] }}', ip: '{{ receiverCtrl.firstSession.ip }}', country_name: '{{ receiverCtrl.firstSession.country }}') %>"    
+      class="flag-icon small-flag"
+      data-ng-class="::('flag-icon-'+receiverCtrl.firstSession.ip_details.country_code | lowercase)"></span>
+    <span data-ng-if="::receiverCtrl.firstSession.city">
+      {{::(receiverCtrl.firstSession.city + ( receiverCtrl.firstSession.subdivision || receiverCtrl.firstSession.country ? ',' : ''))}}
+    </span>
+    <span data-ng-if="::receiverCtrl.firstSession.subdivision" tooltip-append-to-body="true"> {{::(receiverCtrl.firstSession.ip_details.subdivision_code + ( (receiverCtrl.firstSession.showCountry && receiverCtrl.firstSession.country) ? ',' : ''))}}
+    </span>
+  </a>
+  <span data-ng-if="!receiverCtrl.firstSession.ip_details">{{::receiverCtrl.firstSession.unknown}}</span>
+<%end%>
+<% if seen == 'last_seen' %>
+  <a class="margin-sm-left-5" href="{{'https://google.com/maps/place/'+receiverCtrl.lastSession.ip_details.location.lat+','+receiverCtrl.lastSession.ip_details.location.long}}"
+    target="viewer_location"
+    data-ng-if="::receiverCtrl.lastSession.ip_details">
+    <span data-ng-if="::(receiverCtrl.lastSession.ip_details.country_code)" 
+      tooltip-append-to-body="true"
+      uib-tooltip="<%= t("stats.show_seens", recipient: "{{ (receiverCtrl.receiver.name === '' && receiverCtrl.receiver.email === '') ? 'Unknown user' : receiverCtrl.receiver.name === '' ? receiverCtrl.receiver.email : receiverCtrl.receiver.name }}", date: '{{ receiverCtrl.lastSession.pages[receiverCtrl.lastSession.pages.length-1].date.split(' ')[0] }}', at: '{{ receiverCtrl.lastSession.pages[receiverCtrl.lastSession.pages.length-1].date.split(' ')[1] }} {{ receiverCtrl.lastSession.pages[receiverCtrl.lastSession.pages.length-1].date.split(' ')[2] }}', ip: '{{ receiverCtrl.lastSession.ip }}', country_name: '{{ receiverCtrl.lastSession.country }}') %>"    
+      class="flag-icon small-flag"
+      data-ng-class="::('flag-icon-'+receiverCtrl.lastSession.ip_details.country_code | lowercase)"></span>
+    <span data-ng-if="::receiverCtrl.lastSession.city">
+      {{::(receiverCtrl.lastSession.city + ( receiverCtrl.lastSession.subdivision || receiverCtrl.lastSession.country ? ',' : ''))}}
+    </span>
+    <span data-ng-if="::receiverCtrl.lastSession.subdivision" tooltip-append-to-body="true"> {{::(receiverCtrl.lastSession.ip_details.subdivision_code + ( (receiverCtrl.lastSession.showCountry && receiverCtrl.lastSession.country) ? ',' : ''))}}
+    </span>
+  </a>
+  <span data-ng-if="!receiverCtrl.lastSession.ip_details">{{::receiverCtrl.lastSession.unknown}}</span>
+<%end%>

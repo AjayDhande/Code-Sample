@@ -1,0 +1,12 @@
+<ul
+uib-pagination
+data-ng-change="sessCtrl.changePage()"
+total-items="sessCtrl.numItems"
+items-per-page="::sessCtrl.itemsPerPage"
+data-ng-model="sessCtrl.page"
+max-size="::sessCtrl.maxSize"
+class="pagination-sm"
+boundary-links="true"
+force-ellipses="true"
+data-ng-show="sessCtrl.numItems > sessCtrl.itemsPerPage">
+</ul>

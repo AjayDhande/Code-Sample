@@ -1,0 +1,47 @@
+<section class="receiver__tabs__session_header">
+  <div class="receiver__tabs__session_header__stat">
+    <%= t('stats.total_time') %> {{sess.min_viewed}}
+  </div>
+  <div class="receiver__tabs__session_header__stat">
+    <%= t('stats.percent_viewed') %> {{sess.percent_viewed}}
+  </div>
+  <div class="receiver__tabs__session_header__stat">
+    <span data-ng-if="sess.most_viewed_pages.pages.length <= 1"><%= t('stats.top_page') %></span>
+    <span data-ng-if="sess.most_viewed_pages.pages.length > 1"><%= t('stats.top_pages') %></span>:
+    <%= pages_by_time_spent('receiverCtrl','sess') %>
+    <%= pages_by_time_spent_popover('sess') %>
+  </div>
+  <div class="receiver__tabs__session_header__stat">
+    <%= t('stats.exit_page') %>:
+    <%= exit_pages('receiverCtrl','sess') %>
+    <%= exit_page_popover_old('sess') %>
+  </div>
+  <div class="receiver__tabs__session_header__stat">
+    <%= generate_tooltip_new("#{t('stats.engagement')}", "#{t('stats.tooltips.engagement')}",true).html_safe%>:
+    {{sess.engagement}}
+  </div>
+  <div class="receiver__tabs__session_header__stat d-flex align-items-center justify-content-center">
+    <i class="icon-location4 cursor-pointer"
+       popover-placement="auto top"
+       popover-trigger="'click'"
+       popover-append-to-body="true"
+       uib-popover-html="receiverCtrl.renderLocation(sess.id)"></i>
+    <location city="sess.city"
+              class="popover"
+              id="location{{sess.id}}"
+              ip-details="sess.ip_details"
+              subdivision="sess.subdivision"
+              country="sess.country" continent="sess.continent"
+              location-text="'<%= t('stats.location') %>'"
+              unknown="'<%= t('stats.unknown') %>'"></location>
+  </div>
+  <div class="receiver__tabs__session_header__stat d-flex align-items-center justify-content-center">
+    <browser-info info="sess.browser_info" browser="sess.browser" invert-colors="true" os="sess.os" device="sess.device" unknown-browser="'<%= t('stats.unknown_browser') %>'"></browser-info>
+  </div>
+  <div class="receiver__tabs__session_header__stat d-flex align-items-center justify-content-center">
+    <location ip-details="sess.ip_details"
+                show-icon="false"
+                show-country="false"
+                class="margin-sm-left-5"></location>
+  </div>
+</section>

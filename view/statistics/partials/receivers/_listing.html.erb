@@ -1,0 +1,58 @@
+
+<div data-ng-if="::receiversCtrl.filteredReceivers.length == 0"><%= t('stats.no_results') %></div>
+<div class="table-responsive" data-ng-if="(receiversCtrl.filteredReceivers.length > 0)" data-ng-cloak>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th class="name"><%= t('stats.recipient')%></th>
+        <th><%= t('stats.views') %></th>
+        <th><%= t('stats.tbl_time_spent')%></th>
+        <th><%= t('stats.percent_viewed')%></th>
+        <th><%= t('stats.engagement')%></th>
+        <th><%= t('stats.top_page')%></th>
+        <th><%= t('stats.exit_pages')%></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-ng-repeat="receiver in receiversCtrl.filteredReceivers">
+        <td class="name">
+          <a ui-sref="stats-viewer({receiverId: receiver.id})" uib-tooltip="{{ ::receiver.email }}" data-ng-bind="receiversCtrl.showName ? receiver.name : receiver.name_reversed"  data-ng-if="receiver.name !== receiver.email"></a>
+          <a ui-sref="stats-viewer({receiverId: receiver.id})" data-ng-bind="receiver.email"  data-ng-if="receiver.name === receiver.email"></a>
+          <span uib-tooltip="Name not known" data-ng-if="::!receiver.name"><%= t('stats.unknown') %></span>
+        </td>
+        <td>
+          <span uib-popover-html="receiversCtrl.renderSessions(receiver.id)"
+                popover-placement="auto top"
+                popover-trigger="'mouseenter'"
+                popover-append-to-body="true"
+                data-ng-class="{'cursor-help': receiver.sessions.length}"
+                data-ng-bind="receiver.sessions.length"></span>
+
+          <div class="popover sessions-popover receiver-sessions" id="receiver{{receiver.id}}" data-ng-if="receiver.sessions.length">
+            <div data-ng-if="::receiver.sessions.length==1"><%= t('stats.viewers_page.last_view') %></div>
+            <div data-ng-if="::receiver.sessions.length > 1">
+              <%= t('stats.viewers_page.last_x_views',
+                    :num=>'{{receiversCtrl.getMin(receiver.sessions.length,receiversCtrl.maxSessions)}}',
+                    :total=>'{{receiver.sessions.length}}') %>
+            </div>
+            <session-info
+              data-ng-repeat="session in receiver.sessions | limitTo : receiversCtrl.maxSessions"
+              session="session"
+              display-delimiter="$index < (receiversCtrl.getMin(receiver.sessions.length,receiversCtrl.maxSessions)-1)"></session-info>
+          </div>
+        </td>
+        <td><span uib-tooltip="HH:MM:SS">{{ receiver.min_viewed }}</span></td>
+        <td data-ng-bind="::receiver.percent_viewed"></td>
+        <td data-ng-bind="::receiver.engagement"></td>
+        <td>
+          <%= pages_by_time_spent('receiversCtrl','receiver').html_safe %>
+          <%= pages_by_time_spent_popover('receiver').html_safe %>
+        </td>
+        <td>
+          <%= exit_pages2('receiversCtrl','receiver') %>
+          <%= exit_page_popover('receiver') %>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

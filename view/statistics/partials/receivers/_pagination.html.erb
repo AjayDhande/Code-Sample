@@ -1,0 +1,12 @@
+<ul
+uib-pagination
+data-ng-change="receiversCtrl.changePage()"
+total-items="receiversCtrl.numItems"
+items-per-page="::receiversCtrl.itemsPerPage"
+data-ng-model="receiversCtrl.page"
+max-size="::receiversCtrl.maxSize"
+class="pagination-sm"
+boundary-links="true"
+force-ellipses="true"
+data-ng-show="receiversCtrl.numItems > receiversCtrl.itemsPerPage">
+</ul>

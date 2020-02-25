@@ -1,0 +1,180 @@
+<div class="filters">
+  <div class="filters__title">
+    <%= t('filter') %>&nbsp;
+    <a data-ng-click="sessCtrl.resetSessions()" uib-tooltip="Reset Visits" class="cursor-pointer">
+      <i class="icon icon-reset"></i>
+    </a>
+  </div>
+  <div class="filters__cols">
+    <div class="filters__col">
+      <input
+        type="text"
+        data-ng-model="sessCtrl.search.receiver.email"
+        data-ng-change="sessCtrl.changePage(true)"
+        class="form-control margin-bottom-10"
+        placeholder="<%= t('stats.viewer_email') %>">
+      <input
+        type="text"
+        data-ng-model="sessCtrl.filter.location"
+        data-ng-change="sessCtrl.changePage(true)"
+        class="form-control margin-bottom-10"
+        placeholder="<%= t('stats.location_placeholder') %>">
+    </div>
+    <div class="filters__col">
+      <div class="margin-bottom-10">
+        <span class="toolbar-label"><%= t('stats.seen_page.at_least') %> </span>
+        <input
+          type="number"
+          select-on-click
+          data-ng-model="sessCtrl.filter.seen_pages"
+          data-ng-change="sessCtrl.checkValidPage(statsCtrl.objFileInfo.pdfFile.num_pages,'seen_pages')"
+          class="form-control"
+          value="1" size="4" min="1" max="{{::statsCtrl.objFileInfo.pdfFile.num_pages}}"
+          uib-popover="<%= t('stats.valid_page_num', :page_num => '{{::statsCtrl.objFileInfo.pdfFile.num_pages}}') %>"
+          popover-is-open="sessCtrl.invalidPage && sessCtrl.filter.seen_pages !== null"
+          popover-trigger="'none'">
+        <span class="toolbar-label"><%= t('stats.seen_page.seen') %></span>
+      </div>
+      <div style="margin-top: 15px;">
+        <span class="toolbar-label"><%= t('stats.seen_page.at_least') %> </span>
+        <input
+          type="number"
+          select-on-click
+          data-ng-model="sessCtrl.filter.seen_mins"
+          data-ng-change="sessCtrl.changePage(true)"
+          class="form-control"
+          value="1" size="4" min="1">
+        <span class="toolbar-label"><%= t('stats.seen_page.mins') %></span>
+        <input
+          type="number"
+          select-on-click
+          data-ng-model="sessCtrl.filter.on_page"
+          data-ng-change="sessCtrl.checkValidPage(::statsCtrl.objFileInfo.pdfFile.num_pages,'on_page')"
+          data-ng-disabled="sessCtrl.filter.seen_mins === null"
+          class="form-control"
+          value="1" size="4" min="1" max="{{::statsCtrl.objFileInfo.pdfFile.num_pages}}"
+          uib-popover="<%= t('stats.valid_page_num', :page_num => '{{::statsCtrl.objFileInfo.pdfFile.num_pages}}') %>"
+          popover-is-open="sessCtrl.invalidPage && sessCtrl.filter.on_page !== null"
+          popover-trigger="'none'">
+      </div>
+    </div>
+    <div class="filters__col filters__col--dates">
+      <div class="input-group">
+        <input type="text" class="form-control"
+               uib-popover="<%= t('filters.from_date') %>"
+               popover-trigger="'mouseenter'"
+               readonly="readonly"
+               placeholder="<%= t('filters.from_date') %>"
+               data-ng-model="sessCtrl.filter.fromDate"
+               alt-input-formats="yyyy-MM-dd"
+               uib-datepicker-popup="yyyy-MM-dd"
+               data-ng-click="sessCtrl.openCalendar($event,'from_calendar')"
+               data-ng-change="sessCtrl.checkValidDates()"
+               is-open="sessCtrl.from_calendar.opened"
+               on-open-focus="false"
+               datepicker-options="sessCtrl.fromDateOptions"
+               close-text="<%= t('close') %>"/>
+        <span class="input-group-btn">
+          <button type="button" class="btn btn-default" data-ng-click="sessCtrl.openCalendar($event,'from_calendar')"><i class="icon icon-calendar2"></i></button>
+        </span>
+      </div>
+      <div class="input-group">
+        <input type="text" class="form-control"
+               uib-popover="<%= t('filters.to_date') %>"
+               popover-trigger="'mouseenter'"
+               readonly="readonly"
+               placeholder="<%= t('filters.to_date') %>"
+               data-ng-model="sessCtrl.filter.toDate"
+               alt-input-formats="yyyy-MM-dd"
+               uib-datepicker-popup="yyyy-MM-dd"
+               data-ng-click="sessCtrl.openCalendar($event,'to_calendar')"
+               data-ng-change="sessCtrl.checkValidDates()"
+               is-open="sessCtrl.to_calendar.opened"
+               on-open-focus="false"
+               datepicker-options="sessCtrl.toDateOptions"
+               close-text="<%= t('close') %>"/>
+        <span class="input-group-btn">
+          <button type="button" class="btn btn-default" data-ng-click="sessCtrl.openCalendar($event,'to_calendar')"><i class="icon icon-calendar2"></i></button>
+        </span>
+      </div>
+    </div>
+    <div class="filters__col">
+      <div class="btn-group sort">
+        <button type="button" class="btn btn-default dropdown-toggle margin-bottom-10" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span data-ng-bind-html="sessCtrl.currentSort"></span>
+        </button>
+        <ul class="dropdown-menu" style="margin-top: -44px;">
+          <li>
+            <a href="" data-ng-click="sessCtrl.sort('start_time_desc');" data-sort="start_time_desc">
+              <span class="icon icon-arrow-up7"></span>&nbsp;<%= t('stats.views_page.start_time_desc') %>
+            </a>
+          </li>
+          <li>
+            <a href="" data-ng-click="sessCtrl.sort('start_time_asc');" data-sort="start_time_asc">
+              <span class="icon icon-arrow-up7"></span>&nbsp;<%= t('stats.views_page.start_time_asc') %>
+            </a>
+          </li>
+          <li role="separator" class="divider"></li>
+          <li>
+            <a href="" data-ng-click="sessCtrl.sort('percent_desc');" data-sort="percent_desc">
+              <span class="icon icon-arrow-down7"></span>&nbsp;
+              <%= t('stats.views_page.percent_viewed') %>
+            </a>
+          </li>
+          <li>
+            <a href="" data-ng-click="sessCtrl.sort('percent_asc');" data-sort="percent_asc">
+              <span class="icon icon-arrow-up7"></span>&nbsp;
+              <%= t('stats.views_page.percent_viewed') %>
+            </a>
+          </li>
+          <li role="separator" class="divider"></li>
+          <li>
+            <a href="" data-ng-click="sessCtrl.sort('viewed_time_desc');" data-sort="viewed_time_desc">
+              <span class="icon icon-arrow-down7"></span>&nbsp;
+              <%= t('stats.views_page.viewed_time') %>
+            </a>
+          <li>
+            <a href="" data-ng-click="sessCtrl.sort('viewed_time_asc');" data-sort="viewed_time_asc">
+              <span class="icon icon-arrow-up7"></span>&nbsp;
+              <%= t('stats.views_page.viewed_time') %>
+            </a>
+          </li>
+          </li>
+        </ul>
+        <div class="filters__col d-flex" style="min-width: 285px;">
+          <span class="title">
+            <span uib-tooltip="<%= t('doc.et_filter') %>"><%= t('doc.page_viewed_sec') %></span> :&nbsp;
+            <span data-ng-hide="sessCtrl.checkEdit" uib-tooltip="<%= t('doc.et_filter') %>">
+              <input type="number"
+                data-ng-model="sessCtrl.filter.threshold"
+                data-ng-change="sessCtrl.changeListStats(true)"
+                data-ng-click="sessCtrl.switchEdit()"
+                class="form-control threshold-number"
+                style="width: 45px !important;">
+            </span>
+            <span uib-tooltip="<%= t('doc.et_filter') %>" data-ng-hide="!sessCtrl.checkEdit"
+              data-ng-click="sessCtrl.switchEdit()">
+              {{ sessCtrl.filter.threshold }}
+            </span>
+            <span uib-tooltip="<%= t('doc.et_filter') %>" data-ng-if="sessCtrl.filter.threshold === 1">
+              <%= t('number.human.time_units.nsecond') %>
+            </span>
+            <span uib-tooltip="<%= t('doc.et_filter') %>" data-ng-if="sessCtrl.filter.threshold > 1">
+              <%= t('number.human.time_units.seconds') %>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <% if 2==1  %>
+  <div class="margin-bottom-10">
+    <input
+    type="text"
+    data-ng-model="sessCtrl.search.receiver.name"
+    data-ng-change="sessCtrl.changePage(true)"
+    class="form-control"
+    placeholder="<%= t('stats.viewer_name') %>">
+  </div>
+  <% end %>

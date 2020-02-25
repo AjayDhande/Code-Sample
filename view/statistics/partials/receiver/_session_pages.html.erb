@@ -1,0 +1,67 @@
+<div class="table-responsive journey">
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>&nbsp;</th>
+      <th class="page"><%= t('stats.page') %></th>
+      <th class="time"><%= t('stats.time_on_page') %></th>
+      <th class="tags tags-width"><%= t('tl.tags') %></th>
+      <th class="target-page"><%= t('stats.actions') %></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr data-ng-repeat-start="sessPage in receiverCtrl.filteredPages"
+        data-ng-click="receiverCtrl.changePage(sessPage.page)"
+        class="details">
+      <td rowspan="2" class="image">
+        <img data-ng-src="{{receiverCtrl.pdfFile.thumbs_details.small + (sessPage.page-1) + '.' + receiverCtrl.pdfFile.thumbs_details.extension + '?' + receiverCtrl.pdfFile.pdfStamp}}" alt="{{sessPage.page}}">
+      </td>
+      <td class="page">{{sessPage.page}}</td>
+      <td class="time">{{sessPage.min_viewed}}</td>
+      <td class="tags tags-width">
+          <span class="label label-primary margin-left-5 inline-block cursor-pointer"
+                data-ng-click="receiverCtrl.filterByTag(tag)"
+                data-ng-repeat="tag in receiverCtrl.pageTags[sessPage.page]">
+          {{tag}}
+        </span>
+      </td>
+      <td class="target-page">
+        <span class="icon icon-enter3" data-ng-if="sessPage.page == sessPage.landing_page" data-ng-click="receiverCtrl.pdfPopup(sessPage.page, sessPage.date)"></span>
+        <span class="icon icon-file-play2" data-ng-if="sessPage.video_on_page"></span>
+      </td>
+    </tr>
+    <tr data-ng-repeat-end class="time">
+      <td colspan="5" class="time-progress">
+        <span style="width: {{sessPage.seconds/sess.sec_viewed * 100}}%;">&nbsp;</span>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+  <article class="col-xs-10 col-lg-7 item d-none">
+    <div class="row">
+      <div class="col-xs-12 col-sm-3 text-center cursor-pointer"
+      >
+
+      </div>
+      <div class="col-xs-12 col-sm-9">
+        <div class="margin-bottom-5">
+          <%= t('stats.page', page_num: '{{sessPage.page}}') %>
+        </div>
+        <div class="margin-bottom-5" data-ng-if="receiverCtrl.pdfFile.page_tags[sessPage.page].length">
+          <%= t('tl.tags') %>
+          <span class="label label-primary margin-left-5 inline-block cursor-pointer"
+                data-ng-click="receiverCtrl.filterByTag(tag)"
+                data-ng-repeat="tag in receiverCtrl.pageTags[sessPage.page]">
+            {{tag}}
+          </span>
+        </div>
+        <%= t('stats.time_on_page') %>
+        <span class="text-nowrap time-on-page">{{sessPage.seconds}}</span>
+      </div>
+      <div class="col-xs-12 margin-top-10" data-ng-if="(sessPage.elements.length)">
+        <stats-elements-list items="sessPage.elements"></stats-elements-list>
+      </div>
+    </div>
+
+  </article>

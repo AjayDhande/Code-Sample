@@ -1,0 +1,114 @@
+<section class="row glance-numbers">
+  <!--general info-->
+  <div class="col-xs-12 col-sm-8 padding-15 border-shadow show">
+    <div class="row">
+      <%# kdf name for tl%>
+      <div class="col-xs-12" data-ng-show="::statsCtrl.heading.doc_title">
+        <%= t('kdf') %>:
+        <span uib-popover="{{::statsCtrl.renderHtml(statsCtrl.heading.doc_title)}}"
+              popover-trigger="'mouseenter'" popover-placement="bottom-left"
+              popover-class="black">
+          {{ statsCtrl.heading.doc_title}}
+        </span>
+        <span data-ng-if="::statsCtrl.heading.tags.length">/ <%= t('tl.tags') %>: </span>
+        <span data-ng-repeat="tag in statsCtrl.heading.tags"
+              data-ng-if="::statsCtrl.heading.tags.length"
+              data-ng-bind-html="::tag.name"
+              class="label label-primary margin-left-5 inline-block"></span>
+      </div>
+
+      <div class="col-xs-12 col-sm-6 margin-top-10">
+        <%= t('info.created_by')%>: {{::statsCtrl.heading.created_by}} ({{::statsCtrl.heading.created_on}})
+      </div>
+
+      <div class="col-xs-12 col-sm-6 margin-top-10" data-ng-if="statsCtrl.parentType == 'doc'">
+        <a data-ng-href="{{statsCtrl.filteredTlLink}}" target="_blank">
+          <i class="icon-link"></i>
+          {{statsCtrl.filteredTlText}}
+        </a>
+      </div>
+
+      <span class="col-xs-12 col-sm-6 margin-top-10" data-ng-if="statsCtrl.parentType == 'tl'">
+        <%= t('info.created_for')%>:
+        <span data-ng-show="statsCtrl.heading.created_for">{{::statsCtrl.heading.created_for}}</span>
+      </span>
+    </div>
+
+    <div class="row glance_numbers__row">
+      <div class="col-xs-12 col-sm-6">
+        <a ui-sref="stats-views">
+          <i class="icon-file-eye"></i>
+          {{::statsCtrl.stats.viewers}}
+          <%= t('stats.views')%>
+        </a>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        <a ui-sref="stats-viewers">
+          <i class="icon-user2"></i>
+          {{::statsCtrl.stats.returning_viewers}}
+          <%= t('stats.returning')%>
+        </a>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        <i class="icon-checkbox-checked"></i>
+        {{::statsCtrl.stats.optins_num}}
+        <%= t('stats.optins')%>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        <i class="icon-stopwatch"></i>
+        {{::statsCtrl.stats.min_viewed}}
+        <%= t('stats.session_duration') %> <%= generate_tooltip(t('stats.tooltips.session_duration')).html_safe %>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        <i class="icon-file-text2"></i>
+        {{::statsCtrl.stats.pages_viewed}}/{{::statsCtrl.objFileInfo.pdfFile.num_pages}}
+        <%= t('stats.viewed_pages') %>
+        <%= generate_tooltip(t('stats.tooltips.get_pages_viewed_number')).html_safe %>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        <i class="icon-stopwatch"></i>
+        <%= t('stats.total_time', :mins=>'{{::statsCtrl.stats.total_min_viewed}}')%>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        <i class="icon-file-text2"></i>
+        <span data-ng-if="::statsCtrl.stats.most_viewed_pages.pages.length<=1"><%= t('stats.popular_page', page: '{{::statsCtrl.getMostViewedPages()}}') %></span>
+        <span data-ng-if="::statsCtrl.stats.most_viewed_pages.pages.length>1"><%= t('stats.popular_pages', pages: '{{::statsCtrl.getMostViewedPages()}}') %></span>
+        <%= generate_tooltip(t('stats.tooltips.most_viewed_pages')).html_safe %>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        <i class="icon-stopwatch"></i>
+        <span data-ng-if="::statsCtrl.stats.pages_by_time_spent.pages.length<=1"><%= t('stats.most_time_spent_on_page') %></span>
+        <span data-ng-if="::statsCtrl.stats.pages_by_time_spent.pages.length>1"><%= t('stats.most_time_spent_on_pages') %></span>
+        {{::statsCtrl.getPagesByTimeSpent()}} ({{::statsCtrl.stats.pages_by_time_spent.time_spent}})
+        <%= generate_tooltip(t('stats.tooltips.most_time_spent_on_pages')).html_safe %>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        <i class="icon-file-text2"></i>
+        <span data-ng-if="::statsCtrl.stats.popular_exit_pages.pages.length<=1"><%= t('stats.exit_page') %></span>
+        <span data-ng-if="::statsCtrl.stats.popular_exit_pages.pages.length>1"><%= t('stats.exit_pages') %></span>
+        {{::statsCtrl.getExistPages()}}</span>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        <i class="icon-stopwatch"></i>
+        <span class="numbers">{{::statsCtrl.stats.page_min_viewed}}</span>
+        <%= t('stats.avg_time_on_page') %>  <%= generate_tooltip(t('stats.tooltips.avg_time_on_page')).html_safe %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xs-12 col-sm-4 border-shadow">
+    <div class="text-center margin-15">
+      <%= t('stats.engagement')%>
+      <%= generate_tooltip(t('stats.tooltips.engagement')).html_safe%>
+    </div>
+    <highchart class="chart" settings="{data: [statsCtrl.stats.engagement_val],type: 'gauge'}"></highchart>
+  </div>
+</section>
+
+<section class="row is-flex">
+  <article class="col-xs-12 col-sm-6 col-lg-4 border-shadow page"
+           data-ng-repeat="chartObj in statsCtrl.charts">
+    <%# <chart class="chart" settings="chartObj"></chart> %>
+    <highchart class="chart" settings="statsCtrl.charts" back-btn-text="'<%= t('back')%>'"></highchart>
+  </article>
+</section>
